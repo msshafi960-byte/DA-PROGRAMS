@@ -1,0 +1,35 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+data ={
+    'Age': [25,30,22,40,35],
+    'Salary': [50000,54000,58000,61000,59000]
+}
+df = pd.DataFrame(data)
+print('Original Data:\n', df) # Corrected print statement
+
+df['High Salary'] = (df['Salary'] >= 58000).astype(int) # Corrected column creation and astype usage
+
+x = df[['Age']] # x should be a 2D array for scikit-learn models
+y = df['High Salary']
+
+log_model = LogisticRegression() # Instantiate LogisticRegression
+log_model.fit(x, y)
+
+print(f"\nModel Coefficient: {log_model.coef_[0][0]}") # Corrected print and coefficient access
+print(f"Model Intercept: {log_model.intercept_[0]}") # Corrected print and intercept access
+
+age_range = np.linspace(df['Age'].min(), df['Age'].max(), 200).reshape(-1, 1) # Corrected linspace and reshape for 2D array
+age_df = pd.DataFrame(age_range, columns=['Age']) # Corrected column name
+probabilities = log_model.predict_proba(age_df)[:, 1] # Corrected variable name and predict_proba
+
+plt.scatter(df['Age'], df['High Salary'], color='blue', label='Actual Classes') # Corrected plotting arguments
+plt.plot(age_df['Age'], probabilities, color='red', label='Logistic Regression Curve') # Plot probabilities
+
+plt.xlabel('Age')
+plt.ylabel('High Salary (1=High, 0=Low)') # Meaningful y-axis label
+plt.title('Logistic Regression: Age vs High Salary')
+plt.grid(True)
+plt.legend()
+plt.show()
